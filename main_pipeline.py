@@ -7,7 +7,7 @@ def process_video(video_path):
 
     device = 0 if torch.cuda.is_available() else "cpu"
 
-    model = YOLO("model/helmet_best.pt")
+    model = YOLO("model/helmet best.pt")
 
     cap = cv2.VideoCapture(video_path)
 
