@@ -1,26 +1,35 @@
 import streamlit as st
-import tempfile
 import pandas as pd
 from main_pipeline import process_video
+import tempfile
 
-st.set_page_config(page_title="Helmet Violation Detector", layout="wide")
+st.set_page_config(layout="wide")
+st.title("🚨 Helmet Violation Detection System")
 
-st.title("🪖 AI Helmet Violation Detection")
+uploaded_video = st.file_uploader("Upload Traffic Video", type=["mp4","mov","avi"])
 
-uploaded_file = st.file_uploader("Upload Traffic Video", type=["mp4","avi","mov"])
+if uploaded_video is not None:
 
-if uploaded_file:
-    st.success("Video uploaded!")
+    st.info("Processing video... please wait ⏳")
 
-    temp_video = tempfile.NamedTemporaryFile(delete=False)
-    temp_video.write(uploaded_file.read())
+    # save temp video
+    temp_file = tempfile.NamedTemporaryFile(delete=False)
+    temp_file.write(uploaded_video.read())
 
-    if st.button("🚀 Analyze Video"):
-        with st.spinner("Processing video..."):
-            output_video, violations = process_video(temp_video.name)
+    # run detection
+    output_video, violations = process_video(temp_file.name)
 
-        st.video(output_video)
+    st.success("Processing Completed ✅")
 
-        st.subheader("🚨 Violations Detected")
-        df = pd.DataFrame(violations)
-        st.dataframe(df)
+    st.subheader("🎬 Processed Video")
+    video_file = open(output_video, 'rb')
+    video_bytes = video_file.read()
+    st.video(video_bytes)
+
+    st.subheader("📋 Violations Detected")
+
+    if len(violations) == 0:
+        st.success("No Violations Detected 🎉")
+    else:
+        df = pd.DataFrame(violations, columns=["Vehicle ID","Violation"])
+        st.dataframe(df, use_container_width=True)
