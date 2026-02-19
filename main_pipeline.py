@@ -8,7 +8,7 @@ import os
 # LOAD MODEL
 # ============================================
 device = "cuda" if torch.cuda.is_available() else "cpu"
-model = YOLO("model/helmet best.pt")
+model = YOLO("helmet best.pt")
 model.to(device)
 
 # ============================================
